@@ -1,72 +1,44 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+// Define the structure for a linked list node
 struct Node {
     int data;
     struct Node* next;
 };
 
-
-struct Node* createNode(int data) {
+// Function to insert a new node at the end of the linked list
+void insert(struct Node** head, int data) {
+    // Allocate memory for the new node
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
     newNode->data = data;
     newNode->next = NULL;
-    return newNode;
-}
 
-
-void initializeList(struct Node** head) {
-    int values[] = {1, 2, 3, 4, 5};
-    struct Node* current = NULL;
-
-    for (int i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
-        struct Node* newNode = createNode(values[i]);
-        if (*head == NULL) {
-            *head = newNode;
-            current = *head;
-        } else {
-            current->next = newNode;
-            current = newNode;
-        }
-    }
-}
-
-
-void insertBeforeValue(struct Node** head, int newData, int existingData) {
-    struct Node* newNode = createNode(newData);
-    struct Node* temp = *head;
-    struct Node* prev = NULL;
-    if (temp != NULL && temp->data == existingData) {
-        newNode->next = *head;
+    // If the linked list is empty, make the new node the head
+    if (*head == NULL) {
         *head = newNode;
         return;
     }
-    while (temp != NULL && temp->data != existingData) {
-        prev = temp;
+
+    // Otherwise, traverse to the end of the list
+    struct Node* temp = *head;
+    while (temp->next != NULL) {
         temp = temp->next;
-    }    
-    if (temp == NULL) {
-        printf("Value %d not found in the list. Inserting at the end.\n", existingData);
-        if (prev == NULL) {
-            *head = newNode;
-            return;
-        }
-        prev->next = newNode;
-        return;
-    }   
-    newNode->next = temp;
-    prev->next = newNode;
+    }
+
+    // Insert the new node at the end
+    temp->next = newNode;
 }
 
-
+// Function to display the linked list
 void display(struct Node* head) {
-    if (head == NULL) {
-        printf("The linked list is empty.\n");
+    struct Node* temp = head;
+    if (temp == NULL) {
+        printf("List is empty.\n");
         return;
     }
-    
-    struct Node* temp = head;
+
+    // Traverse and print the list, without "NULL" at the end
     while (temp != NULL) {
         printf("%d", temp->data);
         temp = temp->next;
@@ -78,16 +50,12 @@ void display(struct Node* head) {
 }
 
 int main() {
-    struct Node* head = NULL;
-
-   
-    initializeList(&head);
-
-    int choice, data, beforeData;
+    struct Node* head = NULL;  // Initialize the head of the linked list
+    int choice, value;
 
     while (1) {
         printf("\nMenu:\n");
-        printf("1. Insert Before Value\n");
+        printf("1. Insert\n");
         printf("2. Display\n");
         printf("3. Exit\n");
         printf("Enter your choice: ");
@@ -95,20 +63,19 @@ int main() {
 
         switch (choice) {
             case 1:
-                printf("Enter data to insert into the linked list: ");
-                scanf("%d", &data);
-                printf("Enter the value before which the data should be inserted: ");
-                scanf("%d", &beforeData);
-                insertBeforeValue(&head, data, beforeData);
+                printf("Enter the value to insert: ");
+                scanf("%d", &value);
+                insert(&head, value);
                 break;
             case 2:
                 printf("Linked List: ");
                 display(head);
                 break;
             case 3:
-                exit(0);
+                printf("Exiting...\n");
+                exit(0);  // Exit the program
             default:
-                printf("Invalid choice. Please try again.\n");
+                printf("Invalid choice! Please enter a valid option.\n");
         }
     }
 
